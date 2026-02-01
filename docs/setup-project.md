@@ -6,16 +6,10 @@
 
 - ベースイメージ（`ubuntu-base.tar`）が作成済み
 
----
+以下は読み替えてください。
 
-## ⚠️ セキュリティ重要事項
-
-ベースイメージには`baseuser`という共通ユーザーが含まれています。
-
-**必ず以下の手順を実施してください：**
-1. ✅ 個人ユーザーを作成
-2. ✅ `baseuser`を削除
-3. ✅ 強固なパスワードを設定
+- `project-name`: 任意のプロジェクト名
+- `yourname`: 任意のユーザ名
 
 ---
 
@@ -23,23 +17,18 @@
 ```powershell
 wsl --import project-name C:\WSL\project-name C:\WSL\ubuntu-base.tar
 ```
-- `project-name`: 任意のプロジェクト名
-- `C:\WSL\project-name`: インスタンスの保存先
-
----
 
 ## 2. rootでWSL2を起動して個人ユーザーを作成
 
-**1. rootで起動（一時的）**
+### 1. rootで起動（一時的）
 ```powershell
 wsl -d project-name -u root
 ```
 
-**2. 新しいユーザーを作成**
+### 2. 新しいユーザーを作成
 ```bash
 adduser yourname
 ```
-- `yourname`: 任意の名前
 
 **パスワードは強固なものを設定してください：**
 - 12文字以上
@@ -48,75 +37,65 @@ adduser yourname
 
 その他の情報（Full Name等）は任意で入力またはEnterでスキップ。
 
-**3. sudo権限を付与**
+### 3. sudo権限を付与
 ```bash
 usermod -aG sudo yourname
 ```
 
-**4. dockerグループに追加**
+### 4. dockerグループに追加
 ```bash
 usermod -aG docker yourname
 ```
 
----
+## 3. 新ユーザーをデフォルトに設定
 
-## 3. baseuserの削除（重要）
-
-**1. セキュリティのため、必ず削除してください**
-```bash
-userdel -r baseuser
-```
-
-`-r`オプションでホームディレクトリも削除されます。
-
-**2. 削除確認**
-```bash
-cat /etc/passwd | grep baseuser
-```
-
-何も表示されなければ削除成功です。
-
----
-
-## 4. 新ユーザーをデフォルトに設定
-
-**1. WSL設定ファイル開く**
+### 1. WSL設定ファイル開く
 ```bash
 nano /etc/wsl.conf
 ```
 
-**2. `[user]`セクションを以下のように設定**
+### 2. `[user]`セクションを以下のように設定
 ```ini
 [user]
 default = yourname
 ```
+### 3. ホスト名変更（オプション）
 
-保存（Ctrl+O, Enter）して終了（Ctrl+X）
+#### 1. /etc/wsl.confを編集
+```bash
+sudo nano /etc/wsl.conf
+```
 
-**3. rootを終了**
+#### 2. `[network]`セクションのhostnameを変更
+```ini
+[network]
+hostname = project-name
+```
+
+### 4. 保存して終了
+
+（Ctrl+O, Enter）→（Ctrl+X）
+
+### 5. rootを終了
 ```bash
 exit
 ```
 
----
+## 4. .bashrc の設定
 
-## 5. .bashrc の設定
-
-**1. ベースイメージに含まれているファイルで設定を追加**
+### 1. ベースイメージに含まれているファイルで設定を追加
 ```bash
 cat /tmp/wsl2-setup/bashrc.append >> ~/.bashrc
 ```
 
-**2. 設定を反映**
+### 2. 設定を反映
 ```bash
 source ~/.bashrc
 ```
 
----
+## 5. 再起動して確認
 
-## 6. 再起動して確認
-
-**1. シャットダウンと起動**
+### 1. シャットダウンと起動
 ```powershell
 wsl --shutdown
 ```
@@ -124,112 +103,89 @@ wsl --shutdown
 wsl -d project-name
 ```
 
-**2. ユーザー確認**
+### 2. ログイン時のパス確認
+
+ユーザのホームディレクトリになっているか確認
+```bash
+yourname@project-name:~$
+```
+
+違う場合は[4](#4-bashrc-の設定)が反映されているか再確認してください。
+
+### 3. ユーザー確認
 ```bash
 whoami
 ```
 
-→ `yourname`と表示されればOK
+→ `yourname`が表示されればOK
 
-**3. baseuserが存在しないことを確認**
-```bash
-cat /etc/passwd | grep baseuser
-```
+## 6. SSH鍵の準備
 
-→ 何も表示されなければOK
+### 1. 以下の A か B いずれかを実施
 
----
+#### A. 既存の鍵を使う場合
 
-## 7. ホスト名変更（オプション）
+1. sshディレクトリ作成
+    ```bash
+    mkdir -p ~/.ssh
+    ```
+    ```bash
+    chmod 700 ~/.ssh
+    ```
 
-**1. /etc/wsl.confを編集**
-```bash
-sudo nano /etc/wsl.conf
-```
+2. 鍵をコピー（パスは実際のものに変更）
+    ```bash
+    cp /mnt/c/path/to/your_key ~/.ssh/
+    ```
+    ```bash
+    chmod 600 ~/.ssh/your_key
+    ```
 
-**2. `[network]`セクションのhostnameを変更**
-```ini
-[network]
-hostname = project-name
-```
+3. 公開鍵もコピーする場合
+    ```bash
+    cp /mnt/c/path/to/your_key.pub ~/.ssh/
+    ```
+    ```bash
+    chmod 644 ~/.ssh/your_key.pub
+    ```
 
-**3. 保存後、再起動**
-```bash
-exit
-```
-```powershell
-wsl --shutdown
-```
+#### B. 新規に鍵を作成する場合
 
----
+1. 鍵の作成
 
-## 8. SSH鍵の準備
+    **ed25519形式（推奨）:**
+    ```bash
+    ssh-keygen -t ed25519 -C "your@email.com"
+    ```
 
-**1. 以下のいずれかを実施**
+    **RSA形式:**
+    ```bash
+    ssh-keygen -t rsa -b 4096 -C "your@email.com"
+    ```
 
-### A. 既存の鍵を使う場合
+    デフォルトの保存場所とファイル名で良ければEnterを押します。  
+    パスフレーズは任意で設定できます（推奨）。
 
-.sshディレクトリ作成：
-```bash
-mkdir -p ~/.ssh
-```
-```bash
-chmod 700 ~/.ssh
-```
+2. 公開鍵を表示
+    ```bash
+    cat ~/.ssh/id_ed25519.pub
+    ```
 
-鍵をコピー（パスは実際のものに変更）：
-```bash
-cp /mnt/c/path/to/your_key ~/.ssh/
-```
-```bash
-chmod 600 ~/.ssh/your_key
-```
+    RSA形式の場合：
+    ```bash
+    cat ~/.ssh/id_rsa.pub
+    ```
 
-公開鍵もコピーする場合：
-```bash
-cp /mnt/c/path/to/your_key.pub ~/.ssh/
-```
-```bash
-chmod 644 ~/.ssh/your_key.pub
-```
+3. この公開鍵をGitHub/GitLab等に登録
 
-### B. 新規に鍵を作成する場合
+## 7. keychainの有効化
 
-**ed25519形式（推奨）:**
-```bash
-ssh-keygen -t ed25519 -C "your@email.com"
-```
-
-**RSA形式:**
-```bash
-ssh-keygen -t rsa -b 4096 -C "your@email.com"
-```
-
-デフォルトの保存場所とファイル名で良ければEnterを押します。
-パスフレーズは任意で設定できます（推奨）。
-
-**2. 公開鍵を表示**
-```bash
-cat ~/.ssh/id_ed25519.pub
-```
-
-または：
-```bash
-cat ~/.ssh/id_rsa.pub
-```
-
-**3. この公開鍵をGitHub/GitLab等に登録**
-
----
-
-## 9. keychainの有効化
-
-**1. .bashrcを編集**
+### 1. .bashrcを編集
 ```bash
 nano ~/.bashrc
 ```
 
-**2. 以下の行を探してコメント（`#`）を外し、鍵の種類に応じて変更**
+### 2. 以下の行を探してコメント（`#`）を外し、鍵の種類に応じて変更
 ```bash
 # ed25519の場合（デフォルト）
 eval `keychain --eval --agents ssh id_ed25519`
@@ -241,25 +197,25 @@ eval `keychain --eval --agents ssh id_rsa`
 eval `keychain --eval --agents ssh your_key_name`
 ```
 
-保存（Ctrl+O, Enter）して終了（Ctrl+X）
+### 3. 保存して終了
 
-**3. 設定を反映**
+（Ctrl+O, Enter）→（Ctrl+X）
+
+### 4. 設定を反映
 ```bash
 source ~/.bashrc
 ```
 
 パスフレーズを入力します（鍵にパスフレーズを設定している場合）。
 
-**4. SSH接続を確認**
+### 5. SSH接続を確認
 ```bash
 ssh -T git@github.com
 ```
 
----
+## 8. Git設定
 
-## 10. Git設定
-
-**1. 名前とメールアドレスを設定**
+### 1. 名前とメールアドレスを設定
 ```bash
 git config --global user.name "Your Name"
 ```
@@ -267,29 +223,27 @@ git config --global user.name "Your Name"
 git config --global user.email "your@email.com"
 ```
 
-**2. 確認**
+### 2. 確認
 ```bash
 git config --global --list
 ```
 
----
+## 9. プロジェクトのクローン（オプション）
 
-## 11. プロジェクトのクローン
-
-**1. クローンと移動**
+### 1. クローンと移動
 ```bash
-git clone git@github.com:your-org/your-project.git
+git clone git@github.com:your-org/project-name.git
 ```
 ```bash
-cd your-project
+cd project-name
 ```
 
-**2. VSCodeで開く**
+### 2. VSCodeで開く
 ```bash
 code .
 ```
 
-**3. VSCodeで「Dev Containers: Reopen in Container」を実行**
+### 3. VSCodeで「Dev Containers: Reopen in Container」を実行
 
 ---
 
@@ -309,16 +263,14 @@ code .
       "version": "latest"
     }
   },
-  
   "postCreateCommand": "npm install",
-  
   "forwardPorts": [3000]
 }
 ```
 
 ---
 
-## Dev Containerの確認事項
+### Dev Containerの確認事項
 
 SSH接続が動作する：
 ```bash
@@ -335,13 +287,12 @@ git pull
 
 ---
 
-## セキュリティチェックリスト
+### チェックリスト
 
 - [ ] 個人ユーザーを作成した
 - [ ] 強固なパスワードを設定した
 - [ ] sudo権限を付与した
 - [ ] dockerグループに追加した
-- [ ] **baseuserを削除した**（最重要）
 - [ ] デフォルトユーザーを変更した
 - [ ] SSH鍵を設定した
 - [ ] Git設定を完了した

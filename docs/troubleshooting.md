@@ -2,8 +2,6 @@
 
 よくある問題と解決方法です。
 
----
-
 ## Docker関連
 
 ### Dockerが起動しない
@@ -44,8 +42,6 @@ exit
 wsl --shutdown
 ```
 
----
-
 ## SSH関連
 
 ### SSH Agentに鍵が追加されない
@@ -76,27 +72,25 @@ Permission denied (publickey)
 **解決方法:**
 
 1. `.devcontainer/devcontainer.json`を確認：
-```json
-{
-  "features": {
-    "ghcr.io/devcontainers/features/sshd:1": {
-      "version": "latest"
+    ```json
+    {
+      "features": {
+        "ghcr.io/devcontainers/features/sshd:1": {
+          "version": "latest"
+        }
+      }
     }
-  }
-}
-```
+    ```
 
 2. Dev Containerを再ビルド：
    - Ctrl+Shift+P
    - "Dev Containers: Rebuild Container"
 
 3. WSL2側で鍵が読み込まれているか確認：
-```bash
-# WSL2で
-ssh-add -l
-```
-
----
+    ```bash
+    # WSL2で
+    ssh-add -l
+    ```
 
 ## WSL関連
 
@@ -136,8 +130,6 @@ wsl -d your-instance
 **解決方法:**
 ベースイメージを再作成する前に、必ず設定を保存・確認してください。
 
----
-
 ## パフォーマンス
 
 ### WSL2が遅い
@@ -145,11 +137,11 @@ wsl -d your-instance
 **解決方法:**
 
 1. メモリ制限を設定（`C:\Users\YourName\.wslconfig`）：
-```ini
-[wsl2]
-memory=8GB
-processors=4
-```
+    ```ini
+    [wsl2]
+    memory=8GB
+    processors=4
+    ```
 
 2. Windowsのディスク最適化を無効化：
    - 「ドライブのプロパティ」→「ツール」→「ドライブの最適化とデフラグ」で、WSL2のドライブを無効化
@@ -185,8 +177,6 @@ warning: LF will be replaced by CRLF
 # 推奨設定
 git config --global core.autocrlf input
 ```
-
----
 
 ## その他
 

@@ -47,8 +47,8 @@ fi
 # bashrc設定のテンプレートを保存（新ユーザーが使用）
 echo ""
 echo "📝 Creating bashrc configuration template..."
-mkdir -p /tmp/wsl2-setup
-cat > /tmp/wsl2-setup/bashrc.append << 'EOF'
+mkdir -p /var/tmp/wsl2-setup
+cat > /var/tmp/wsl2-setup/bashrc.append << 'EOF'
 
 # ========================================
 # WSL2 Base Setup Configuration
@@ -70,11 +70,4 @@ echo ""
 echo "========================================"
 echo "✅ Setup completed!"
 echo "========================================"
-echo ""
-echo "⚠️  IMPORTANT: Next steps:"
-echo ""
-echo "1. Set default user in /etc/wsl.conf"
-echo "2. Restart WSL2"
-echo "3. Verify Docker is working"
-echo "4. Export the image"
 echo ""

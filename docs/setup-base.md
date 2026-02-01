@@ -20,22 +20,20 @@ Enter new UNIX username: baseuser
 New password: baseuser
 ```
 
-**重要**: このユーザーは一時的なものです。
+**重要**: このユーザーは一時的なものです。後ほど削除します。
 - ユーザー名: `baseuser`（固定）
 - パスワード: `baseuser`（シンプルなもの）
 
-このユーザーはベースイメージ作成にのみ使用し、**各自の環境で削除します**。
-
 ---
 
-## 2. ホームディレクトリに移動
+## 2. Dockerのインストールと初期設定
+
+### 1. ホームディレクトリに移動
 ```bash
 cd ~
 ```
 
----
-
-## 3. リポジトリのクローン
+### 2. リポジトリのクローン
 ```bash
 git clone https://github.com/uminekokenimu/wsl2-base-setup.git
 ```
@@ -44,9 +42,7 @@ cd wsl2-base-setup
 ```
 ※Gitがインストールされていない場合はをインストールしてください。
 
----
-
-## 4. セットアップスクリプトの実行
+### 3. セットアップスクリプトの実行
 ```bash
 chmod +x setup.sh install-docker.sh
 ```
@@ -54,31 +50,51 @@ chmod +x setup.sh install-docker.sh
 ./setup.sh
 ```
 
-### スクリプトが行うこと
+#### スクリプトが行うこと
 
 1. システムパッケージの更新
 2. keychainのインストール（SSH Agent管理用）
 3. Dockerの公式インストール
 5. `/etc/wsl.conf`に[network]セクションを追加
-6. `~/.bashrc`への設定追記
+6. `~/.bashrc`への追記用設定を保存
 
----
-
-## 5. WSL2の終了
+### 4. WSL2の終了
 ```bash
 exit
 ```
 
----
+## 3. 不要ユーザの削除とエクスポート
 
-## 7. WSL2をシャットダウン
+### 1. rootで起動（一時的）
+```powershell
+wsl -d ubuntu-base -u root
+```
+
+### 2. baseuserの削除
+```bash
+userdel -r baseuser
+```
+
+`-r`オプションでホームディレクトリも削除されます。
+
+**※削除確認**
+```bash
+cat /etc/passwd | grep baseuser
+```
+
+何も表示されなければ削除成功です。
+
+### 3. WSL2の終了
+```bash
+exit
+```
+
+### 4. WSL2をシャットダウン
 ```powershell
 wsl --shutdown
 ```
 
----
-
-## 8. ベースイメージのエクスポート
+## 4. ベースイメージのエクスポート
 
 エクスポート先ディレクトリを作成：
 ```powershell
@@ -99,16 +115,6 @@ wsl --export ubuntu-base C:\WSL\ubuntu-base.tar
 - `C:\WSL\ubuntu-base.tar`を安全な場所にバックアップ
 - 定期的に更新（推奨：月1回）
 - バージョン管理（例：`ubuntu-base-2024-01.tar`）
-
----
-
-## ⚠️ 重要な注意事項
-
-このベースイメージには`baseuser`という共通ユーザーが含まれています。
-
-**プロジェクト環境作成時に必ず以下を実施してください：**
-1. 個人ユーザーを作成
-2. `baseuser`を削除
 
 ---
 

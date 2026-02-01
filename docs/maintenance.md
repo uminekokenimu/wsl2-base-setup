@@ -2,18 +2,16 @@
 
 ベースイメージとプロジェクト環境のメンテナンス方法です。
 
----
-
 ## ベースイメージの更新
 
-### 月次更新（推奨）
+※月次更新（推奨）
 
-**1. ベースイメージに入る**
+### 1. ベースイメージに入る
 ```bash
-wsl -d ubuntu-base
+wsl -d ubuntu-base -u root
 ```
 
-**2. パッケージ更新**
+### 2. パッケージ更新
 ```bash
 sudo apt update
 ```
@@ -21,7 +19,7 @@ sudo apt update
 sudo apt upgrade -y
 ```
 
-**3. Docker更新（必要に応じて）**
+### 3. Docker更新（必要に応じて）
 ```bash
 cd ~/wsl2-base-setup
 ```
@@ -32,37 +30,35 @@ git pull
 ./install-docker.sh
 ```
 
-**4. 再エクスポート**
+### 4. 再エクスポート
 ```bash
 exit
 ```
 
-**5. WSL2をシャットダウン**
+### 5. WSL2をシャットダウン
 ```powershell
 wsl --shutdown
 ```
 
-**6. 古いベースイメージをバックアップ**
+### 6. 古いベースイメージをバックアップ
 ```powershell
 Move-Item C:\WSL\ubuntu-base.tar C:\WSL\ubuntu-base-backup-$(Get-Date -Format 'yyyyMMdd').tar
 ```
 
-**7. 新しいベースイメージをエクスポート**
+### 7. 新しいベースイメージをエクスポート
 ```powershell
 wsl --export ubuntu-base C:\WSL\ubuntu-base.tar
 ```
 
----
-
 ## Dockerインストール手順の更新
 
-**1. 公式ドキュメントが変更された場合**
+### 1. 公式ドキュメントが変更された場合
 
 1. `install-docker.sh`を編集
 2. 変更内容をテスト
 3. コミット・プッシュ
 
-**2. テスト用インスタンスで確認**
+### 2. テスト用インスタンスで確認
 ```bash
 wsl -d ubuntu-base
 ```
@@ -79,21 +75,17 @@ git pull
 docker run hello-world
 ```
 
----
-
 ## バージョン管理
 
-**1. ベースイメージに日付やバージョンを付ける**
+### 1. ベースイメージに日付やバージョンを付ける
 ```powershell
 wsl --export ubuntu-base C:\WSL\ubuntu-base-2024-01-15.tar
 ```
 
-**2. 最新版へのシンボリックリンク（PowerShell 7+）**
+### 2. 最新版へのシンボリックリンク（PowerShell 7+）
 ```powershell
 New-Item -ItemType SymbolicLink -Path "C:\WSL\ubuntu-base.tar" -Target "C:\WSL\ubuntu-base-2024-01-15.tar"
 ```
-
----
 
 ## プロジェクト環境の更新
 
@@ -101,7 +93,7 @@ New-Item -ItemType SymbolicLink -Path "C:\WSL\ubuntu-base.tar" -Target "C:\WSL\u
 
 ### 方法1: 再作成（推奨）
 
-**1. プロジェクトをバックアップ**
+### 1. プロジェクトをバックアップ
 
 ```bash
 wsl -d old-project
@@ -116,17 +108,17 @@ cp ~/project-backup.tar.gz /mnt/c/backup/
 exit
 ```
 
-**2. 古い環境を削除**
+### 2. 古い環境を削除
 ```powershell
 wsl --unregister old-project
 ```
 
-**3. 新しいベースから再作成**
+### 3. 新しいベースから再作成
 ```powershell
 wsl --import new-project C:\WSL\new-project C:\WSL\ubuntu-base.tar
 ```
 
-**4. プロジェクトを復元**
+### 4. プロジェクトを復元
 ```bash
 wsl -d new-project
 ```
@@ -148,8 +140,6 @@ sudo apt update
 sudo apt upgrade -y
 ```
 
----
-
 ## バックアップ戦略
 
 ### 定期バックアップ
@@ -164,8 +154,6 @@ wsl --export project-name C:\WSL\Backups\project-name-$(Get-Date -Format 'yyyyMM
 - 外付けHDD
 - クラウドストレージ（OneDrive、Google Driveなど）
 - NAS
-
----
 
 ## クリーンアップ
 
