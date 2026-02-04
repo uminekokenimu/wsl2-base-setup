@@ -76,7 +76,7 @@ hostname = project-name
 
 #### 1. ベースイメージに含まれているファイルで設定を追加
 ```bash
-cat /tmp/wsl2-setup/bashrc.append >> ~/.bashrc
+cat /var/tmp/wsl2-setup/bashrc.append >> ~/.bashrc
 ```
 
 #### 2. 設定を反映
