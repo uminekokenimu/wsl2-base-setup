@@ -47,53 +47,49 @@ usermod -aG sudo yourname
 usermod -aG docker yourname
 ```
 
-## 3. 新ユーザーをデフォルトに設定
+### 3. 新ユーザーをデフォルトに設定
 
-### 1. WSL設定ファイル開く
+#### 1. WSL設定ファイル開く
 ```bash
 nano /etc/wsl.conf
 ```
 
-### 2. `[user]`セクションを以下のように設定
+#### 2. `[user]`セクションを以下のように設定
 ```ini
 [user]
 default = yourname
 ```
-### 3. ホスト名変更（オプション）
 
-#### 1. /etc/wsl.confを編集（既に開いている場合は不要）
-```bash
-sudo nano /etc/wsl.conf
-```
+#### 3. ホスト名変更（オプション）
 
-#### 2. `[network]`セクションのhostnameを変更
+`[network]`セクションのhostnameを変更
 ```ini
 [network]
 hostname = project-name
 ```
 
-### 4. 保存して終了
+#### 4. 保存して終了
 
 （Ctrl+O, Enter）→（Ctrl+X）
+
+### 4. .bashrc の設定
+
+#### 1. ベースイメージに含まれているファイルで設定を追加
+```bash
+cat /tmp/wsl2-setup/bashrc.append >> ~/.bashrc
+```
+
+#### 2. 設定を反映
+```bash
+source ~/.bashrc
+```
 
 ### 5. rootを終了
 ```bash
 exit
 ```
 
-## 4. .bashrc の設定
-
-### 1. ベースイメージに含まれているファイルで設定を追加
-```bash
-cat /tmp/wsl2-setup/bashrc.append >> ~/.bashrc
-```
-
-### 2. 設定を反映
-```bash
-source ~/.bashrc
-```
-
-## 5. 再起動して確認
+## 6. 再起動して確認
 
 ### 1. シャットダウンと起動
 ```powershell
