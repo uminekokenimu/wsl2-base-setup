@@ -61,7 +61,7 @@ default = yourname
 ```
 ### 3. ホスト名変更（オプション）
 
-#### 1. /etc/wsl.confを編集
+#### 1. /etc/wsl.confを編集（既に開いている場合は不要）
 ```bash
 sudo nano /etc/wsl.conf
 ```
