@@ -47,7 +47,7 @@ usermod -aG sudo yourname
 usermod -aG docker yourname
 ```
 
-### 3. 新ユーザーをデフォルトに設定
+### 5. 新ユーザーをデフォルトに設定
 
 #### 1. WSL設定ファイル開く
 ```bash
@@ -72,24 +72,34 @@ hostname = project-name
 
 （Ctrl+O, Enter）→（Ctrl+X）
 
-### 4. .bashrc の設定
-
-#### 1. ベースイメージに含まれているファイルで設定を追加
-```bash
-cat /var/tmp/wsl2-setup/bashrc.append >> ~/.bashrc
-```
-
-#### 2. 設定を反映
-```bash
-source ~/.bashrc
-```
-
-### 5. rootを終了
+### 6. rootを終了
 ```bash
 exit
 ```
 
-## 6. 再起動して確認
+## 4. .bashrc の設定
+
+### 1. 起動
+```powershell
+wsl -d project-name
+```
+
+### 2. ベースイメージに含まれているファイルで設定を追加
+```bash
+cat /var/tmp/wsl2-setup/bashrc.append >> ~/.bashrc
+```
+
+### 3. 設定を反映
+```bash
+source ~/.bashrc
+```
+
+### 4. rootを終了
+```bash
+exit
+```
+
+## 5. 再起動して確認
 
 ### 1. シャットダウンと起動
 ```powershell
