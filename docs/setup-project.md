@@ -94,7 +94,7 @@ cat /var/tmp/wsl2-setup/bashrc.append >> ~/.bashrc
 source ~/.bashrc
 ```
 
-### 4. rootを終了
+### 4. 一旦を終了
 ```bash
 exit
 ```
